@@ -1,6 +1,7 @@
 package main
 
 import (
+	"clickship/controllers"
 	"clickship/models"
 	"fmt"
 	"log"
@@ -37,9 +38,22 @@ func init() {
 func main() {
 	// the Database successfully connected => do something now :)
 	r := mux.NewRouter()
+	// add Database to the context
+	r.Use(func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ctx := r.Context()
+			ctx = models.ContextWithDatabase(ctx, database)
+			next.ServeHTTP(w, r.WithContext(ctx))
+		})
+	})
+
 	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Hello, World!"))
 	})
+
+	r.Handle("/auth/login", http.HandlerFunc(controllers.Login))
+
+	r.Handle("/auth/register", http.HandlerFunc(controllers.Register))
 
 	log.Println("Server is running on port 4000")
 	log.Panic(http.ListenAndServe(":4000", r))
