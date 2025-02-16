@@ -21,10 +21,11 @@ type User struct {
 	Username       string      `json:"username"`
 	Password       string      `json:"password"`
 	Email          string      `gorm:"unique" json:"email"`
+	AvatarURL      *string     `json:"avatar_url"`
 	SuscribedSince *time.Time  `json:"suscribed_since"`
 	SuscribtionID  *uint       `json:"suscribtion_id"`
 	Suscribtion    Suscribtion `gorm:"foreignKey:SuscribtionID"`
-	UserType       UserType    `json:"user_type"`
+	UserType       UserType    `gorm:"default:3" json:"user_type"`
 
 	// Associations
 	Adresses   []UserAdress
