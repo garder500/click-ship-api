@@ -19,11 +19,12 @@
     services.postgres = {
       enable = true;
       port = 5432;
+      listen_addresses = "127.0.0.1";
       initialDatabases = [{
         name = "clickship";
         user = "clickship";
-        password = "clickship";
-      }]
+        pass = "clickship";
+      }];
     };
   # https://devenv.sh/scripts/
   scripts.hello.exec = ''
