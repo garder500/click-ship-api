@@ -3,7 +3,10 @@ package main
 import (
 	utils "clickship/models"
 	"fmt"
+	"log"
+	"net/http"
 
+	mux "github.com/gorilla/mux"
 	"gorm.io/gorm"
 )
 
@@ -20,6 +23,11 @@ func init() {
 }
 
 func main() {
-	// Do something with the database
-	fmt.Println(database.Config.Dialector.Name())
+	// the Database successfully connected => do something now :)
+	r := mux.NewRouter()
+	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("Hello, World!"))
+	})
+
+	log.Panic(http.ListenAndServe(":4000", r))
 }
