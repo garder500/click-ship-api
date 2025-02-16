@@ -1,7 +1,7 @@
 package main
 
 import (
-	utils "clickship/models"
+	"clickship/models"
 	"fmt"
 	"log"
 	"net/http"
@@ -16,9 +16,21 @@ var (
 )
 
 func init() {
-	database, initErr = utils.InitDatabase()
+	database, initErr = models.InitDatabase()
 	if initErr != nil {
 		panic(fmt.Sprintf("Failed to connect to database: %v", initErr))
+	}
+
+	// create Schema
+
+	database.Exec("CREATE SCHEMA IF NOT EXISTS users")
+	database.Exec("CREATE SCHEMA IF NOT EXISTS suscribtions")
+
+	// Migrate the schema
+	if database.AutoMigrate(&models.User{}, &models.UserAdress{}, &models.UserCard{}, &models.UserIdentity{}, &models.Suscribtion{}, &models.SuscribtionHistory{}) != nil {
+		panic("Failed to migrate the schema")
+	} else {
+		log.Println("Schema migrated successfully")
 	}
 }
 
@@ -29,5 +41,6 @@ func main() {
 		w.Write([]byte("Hello, World!"))
 	})
 
+	log.Println("Server is running on port 4000")
 	log.Panic(http.ListenAndServe(":4000", r))
 }
